@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="./bootstrap.css">
+    <script src="vue.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="col-md-9 col-md-offset-1">
+        <h1>Hello Vue.js !</h1>
+        <div id="app">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th class="text-right"><input type="checkbox" v-model="seen" v-on:click="choose()">全选 </th>
+                    <th class="text-right">商品</th>
+                    <th class="text-right">数量</th>
+                    <th class="text-right">单价（元）</th>
+                    <th class="text-right">金额（元）</th>
+                    <th class="text-right">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(value,key) in books">
+                    <td class="text-right"><input type="checkbox" v-model="value.seen" ></td>
+                    <td class="text-right">{{value.name}}</td>
+                    <td class="text-right"> <button v-on:click="value.number-=1">-</button> {{value.number}} <button v-on:click="value.number+=1">+</button></td>
+                    <td class="text-right">{{value.price}}</td>
+                    <td class="text-right">{{value.sum=value.number*value.price}}</td>
+                    <template v-if="value.id%2==0">
+                        <td class="text-right"><button class="btn btn-success" @click="removeBook(key)">删除</button></td>
+                    </template>
+                    <template v-else>
+                        <td class="text-right"><button class="btn btn-danger" @click="removeBook(key)">删除</button></td>
+                    </template>
+                </tr>
+                </tbody>
+            </table>
+            <button v-on:click="deletes">删除所选商品</button>
+            <span>{{fn()}}件商品总计（不含运费）：￥{{figure}}</span>
+            <button>去结算</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app=new Vue({
+        el:'#app',
+        data:{
+            seen:false,
+            books:[
+                {
+                    seen:false,
+                    name:'红楼梦',
+                    number:1,
+                    price:50,
+                    sum:50
+                },{
+                    seen:false,
+                    name:'水浒传',
+                    number:1,
+                    price:80,
+                    sum:80
+                },{
+                    seen:false,
+                    name:'三国演义',
+                    number:1,
+                    price:60,
+                    sum:60
+                },{
+                    seen:false,
+                    name:'西游记',
+                    number:1,
+                    price:70,
+                    sum:70
+                }
+            ]
+        },
+        computed:{
+            figure:function(){
+                var result=0;
+                for(var i=0;i<this.books.length;i++){
+                    if(this.books[i].seen){
+                        result+=Number(this.books[i].sum)
+                    }
+                }
+                return result;
+            }
+        },
+        methods:{
+            removeBook:function(book){
+                this.books.splice(book,1);
+            },
+            fn:function(){
+                var n=0;
+                for(var i=0;i<this.books.length;i++){
+                    n+=Number(this.books[i].seen)
+                    if(n==4){
+                        this.seen=true;
+                    }else{
+                        this.seen=false;
+                    }
+                }
+                return n;
+            },
+            choose:function(){
+                if(!this.seen){
+                    for(var i=0;i<this.books.length;i++){
+                        this.books[i].seen=true;
+                    }
+                }else{
+                    for(var i=0;i<this.books.length;i++){
+                        this.books[i].seen=false;
+                    }
+                }
+            },
+            deletes:function(){
+                this.books=this.books.filter(function (value) {return !value.seen})
+            }
+        }
+    })
+</script>
+</body>
+</html>
